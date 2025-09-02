@@ -1,0 +1,81 @@
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Líneas de lenguaje para facturas
+    |--------------------------------------------------------------------------
+    |
+    | Las siguientes líneas de lenguaje son para la pantalla de facturación.
+    |
+    */
+    'invoice_settings' => 'Configuración de facturas',
+    'manage_your_invoices' => 'Gestiona la configuración de tus facturas',
+    'all_your_invoice_schemes' => 'Todos tus esquemas de facturación',
+    'added_success' => 'Configuración de factura añadida con éxito',
+    'updated_success' => 'Configuración de factura actualizada con éxito',
+    'deleted_success' => 'Configuración de factura eliminada con éxito',
+    'add_invoice' => 'Agregar nuevo esquema de factura',
+    'edit_invoice' => 'Editar esquema de factura',
+    'name' => 'Nombre',
+    'prefix' => 'Prefijo',
+    'start_number' => 'Comenzar desde',
+    'total_digits' => 'Número de dígitos',
+    'preview' => 'Vista previa',
+    'not_selected' => 'No seleccionado',
+    'invoice_count' => 'Contador de facturas',
+    'invoice_schemes' => 'Esquemas de facturación',
+    'invoice_layouts' => 'Diseños de facturas',
+    'invoice_layout' => 'Diseño de factura',
+    'all_your_invoice_layouts' => 'Todos tus diseños de facturas',
+    'add_invoice_layout' => 'Agregar nuevo diseño de factura',
+    'layout_name' => 'Nombre del diseño',
+    'invoice_scheme' => 'Esquema de factura',
+    'header_text' => 'Texto del encabezado',
+    'invoice_no_prefix' => 'Etiqueta de número de factura',
+    'invoice_heading' => 'Encabezado de factura',
+    'sub_total_label' => 'Etiqueta de subtotal',
+    'discount_label' => 'Etiqueta de descuento',
+    'tax_label' => 'Etiqueta de impuestos',
+    'total_label' => 'Etiqueta de total',
+    'fields_to_be_shown_in_address' => 'Campos que se mostrarán en la dirección de ubicación',
+    'highlight_color' => 'Color de resaltado',
+    'footer_text' => 'Texto del pie de página',
+    'layout_added_success' => 'Diseño de factura añadido con éxito',
+    'edit_invoice_layout' => 'Editar diseño de factura',
+    'layout_updated_success' => 'Diseño de factura actualizado con éxito',
+    'used_in_locations' => 'Usado en ubicaciones',
+    'show_business_name' => 'Mostrar nombre del negocio',
+    'show_location_name' => 'Mostrar nombre de la ubicación',
+    'show_mobile_number' => 'Número de móvil',
+    'show_alternate_number' => 'Número alternativo',
+    'show_email' => 'Correo electrónico',
+    'show_tax_1' => 'Detalles del impuesto 1',
+    'show_tax_2' => 'Detalles del impuesto 2',
+    'fields_to_shown_for_communication' => 'Campos para detalles de comunicación',
+    'fields_to_shown_for_tax' => 'Campos para detalles de impuestos',
+    'invoice_logo' => 'Logo de la factura',
+    'show_logo' => 'Mostrar el logo de la factura',
+    'show_barcode' => 'Mostrar código de barras',
+    'total_due_label' => 'Etiqueta de total adeudado',
+    'invoice_heading_not_paid' => 'Sufijo del encabezado para no pagado',
+    'invoice_heading_paid' => 'Sufijo del encabezado para pagado',
+    'show_payments' => 'Mostrar información de pago',
+    'show_customer' => 'Mostrar información del cliente',
+    'paid_label' => 'Etiqueta de monto pagado',
+    'customer_label' => 'Etiqueta de cliente',
+    'invoice_design' => 'Diseño de factura',
+    'auto_reminder' => 'Recordatorio automático',
+    'auto_due_date' => 'Fecha de vencimiento automática',
+    'tax_rate' => 'Tasa de impuesto',
+    'default_discount_amount' => 'Monto de descuento predeterminado',
+    'default_discount_type' => 'Tipo de descuento predeterminado',
+    'enable_sales_agent' => 'Habilitar agente de ventas',
+    'enable_commission_agent' => 'Habilitar agente de comisión',
+    'footer_text' => 'Texto del pie de página',
+    'customization_updated_success' => 'Personalización actualizada con éxito',
+    'number_type' => 'Tipo de número',
+    'sequential' => 'Secuencial'
+
+];

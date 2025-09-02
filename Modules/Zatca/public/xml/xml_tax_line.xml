@@ -1,0 +1,11 @@
+        <cac:TaxSubtotal>
+            <cbc:TaxableAmount currencyID="SET_CURRENCY">INVOICE_TAXABLE_AMOUNT</cbc:TaxableAmount>
+            <cbc:TaxAmount currencyID="SET_CURRENCY">INVOICE_TOTAL_TAX</cbc:TaxAmount>
+            <cac:TaxCategory>
+                <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">INVOICE_TAX_CODE</cbc:ID>
+                <cbc:Percent>INVOICE_TAX_PERCENT</cbc:Percent>SET_EXEMPTION_REASON_AND_CODE
+                <cac:TaxScheme>
+                    <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:TaxCategory>
+        </cac:TaxSubtotal>

@@ -1,0 +1,51 @@
+@inject('request', 'Illuminate\Http\Request')
+<div class="pos-topbar no-print">
+  <div class="top-left">
+      <div class="back">
+          <a href="{{ action('HomeController@index')}}" title="{{ __('lang_v1.go_back') }}" data-toggle="tooltip" data-placement="bottom">
+              <img src="{{ asset('img/icons/back-icon.svg') }}" alt="">
+          </a>
+      </div>
+      <div class="welcome-message">
+          <h3>@lang('lang_v1.restaurant')</h3>
+      </div>
+  </div>
+
+  <div class="top-right">
+      <!-- Pos Button -->
+      @if (in_array('pos_sale', $enabled_modules))
+            @can('sell.create')
+                <a href="{{ action('SellPosController@create') }}" title="@lang('sale.pos_sale')" data-toggle="tooltip"
+                    data-placement="bottom" class="pos">
+                    <svg width="24" height="25" viewBox="0 0 24 25" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M15 21.5V16.1C15 15.5399 15 15.2599 14.891 15.046C14.7951 14.8578 14.6422 14.7049 14.454 14.609C14.2401 14.5 13.9601 14.5 13.4 14.5H10.6C10.0399 14.5 9.75992 14.5 9.54601 14.609C9.35785 14.7049 9.20487 14.8578 9.10899 15.046C9 15.2599 9 15.5399 9 16.1V21.5M3 7.5C3 9.15685 4.34315 10.5 6 10.5C7.65685 10.5 9 9.15685 9 7.5C9 9.15685 10.3431 10.5 12 10.5C13.6569 10.5 15 9.15685 15 7.5C15 9.15685 16.3431 10.5 18 10.5C19.6569 10.5 21 9.15685 21 7.5M6.2 21.5H17.8C18.9201 21.5 19.4802 21.5 19.908 21.282C20.2843 21.0903 20.5903 20.7843 20.782 20.408C21 19.9802 21 19.4201 21 18.3V6.7C21 5.5799 21 5.01984 20.782 4.59202C20.5903 4.21569 20.2843 3.90973 19.908 3.71799C19.4802 3.5 18.9201 3.5 17.8 3.5H6.2C5.0799 3.5 4.51984 3.5 4.09202 3.71799C3.71569 3.90973 3.40973 4.21569 3.21799 4.59202C3 5.01984 3 5.57989 3 6.7V18.3C3 19.4201 3 19.9802 3.21799 20.408C3.40973 20.7843 3.71569 21.0903 4.09202 21.282C4.51984 21.5 5.07989 21.5 6.2 21.5Z"
+                            stroke="#fff" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                    <span>@lang('lang_v1.pos')</span>
+                </a>
+            @endcan
+        @endif
+
+      <div class="options">
+          <button class="item">
+            <a href="{{action('BusinessController@getSettings')}}">
+              <img src="{{ asset('img/icons/settings.svg') }}" alt="">
+            </a>
+          </button>
+
+          <button class="item hide-mobile-only">
+            <a href="{{action('Auth\LoginController@logout')}}">
+              <img src="{{ asset('img/icons/log-out-04.svg') }}" alt="">
+            </a>
+          </button>
+
+          <button class="item display-mobile-only" id="menu-btn">
+              <img src="{{ asset('img/icons/menu-flex.svg') }}" alt="">
+          </button>
+      </div>
+
+  </div>
+</div>

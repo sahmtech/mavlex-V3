@@ -1,0 +1,75 @@
+# /node_modules
+# /public/hot
+# /public/storage
+# /storage/*.key
+# /vendor
+# /.idea
+# /.vagrant
+# Homestead.json
+# Homestead.yaml
+# npm-debug.log
+# .env
+
+# /public/uploads/business_logos
+# /public/uploads/documents
+# /public/uploads/business_documents
+# /public/uploads/profile_images/
+# /public/uploads/img
+# /public/uploads/media
+# /public/uploads/invoice_logos
+#/public/uploads/salesSalaryRequest
+# /public/uploads/UltimatePOS
+# /public/uploads/temp
+# /public/css/
+# /public/fonts/
+# /public/images/
+# /public/modules/
+# /public/mix-manifest.json
+# /public/docs
+# /public/js/skins/
+# .scribe
+/vendor/
+node_modules/
+npm-debug.log
+yarn-error.log
+
+
+composer.lock
+# Laravel 4 specific
+bootstrap/compiled.php
+bootstrap/cache/*
+bootstrap/cache
+bootstrap/cache/config.php
+app/storage/
+
+# Laravel 5 & Lumen specific
+public/storage
+public/hot
+
+# Laravel 5 & Lumen specific with changed public path
+public_html/storage
+public_html/hot
+storage/logs
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/views/
+storage/debugbar/
+storage/*.key
+public/uploads/business_documents/
+public/uploads/employee_contracts/
+public/uploads/insuranceContracts/
+public/uploads/officalDocuments/
+public/uploads/contracts/*
+public/uploads/contracts/*
+public/uploads/lead_files/
+public/uploads/*
+public/uploads/*/*
+public/uploads/tickets_attachments/
+bootstrap/cache/*
+bootstrap/cache/
+.env
+Homestead.yaml
+Homestead.json
+/.vagrant
+.phpunit.result.cache
+

@@ -1,0 +1,77 @@
+@extends('layouts.guest')
+@section('title', $title)
+@section('content')
+
+<div class="container">
+    <div class="spacer"></div>
+    <div class="row">
+        <div class="col-xs-12 col-md-6 col-md-offset-3">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <table class="table no-border">
+                        <tr>
+                            @if(!empty($transaction->business->logo))
+                                <td class="width-50 text-center">
+                                    <img src="{{ asset( 'uploads/business_logos/' . $transaction->business->logo ) }}" alt="Logo" style="max-width: 80%;">
+                                </td>
+                            @endif
+                            <td class="text-center">
+                                <address>
+                                <strong>{{ $transaction->business->name }}</strong><br>
+                                {{ $transaction->location->name ?? '' }}
+                                @if(!empty($transaction->location->landmark))
+                                    <br>{{$transaction->location->landmark}}
+                                @endif
+                                @if(!empty($transaction->location->city) || !empty($transaction->location->state) || !empty($transaction->location->country))
+                                    <br>{{implode(',', array_filter([$transaction->location->city, $transaction->location->state, $transaction->location->country]))}}
+                                @endif
+                              
+                                @if(!empty($transaction->business->tax_number_1))
+                                    <br>{{$transaction->business->tax_label_1}}: {{$transaction->business->tax_number_1}}
+                                @endif
+
+                                @if(!empty($transaction->business->tax_number_2))
+                                    <br>{{$transaction->business->tax_label_2}}: {{$transaction->business->tax_number_2}}
+                                @endif
+
+                                @if(!empty($transaction->location->mobile))
+                                    <br>@lang('contact.mobile'): {{$transaction->location->mobile}}
+                                @endif
+                                @if(!empty($transaction->location->email))
+                                    <br>@lang('business.email'): {{$transaction->location->email}}
+                                @endif
+                            </address>
+                            </td>
+                        </tr>
+                    </table>
+                    <h4 class="box-title">@lang('lang_v1.payment_for_invoice_no'): {{$transaction->invoice_no}}</h4>
+                    <table class="table no-border">
+                        <tr>
+                            <td>
+                                <strong>@lang('contact.customer'):</strong><br>
+                                {!!$transaction->contact->contact_address!!}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>@lang('sale.sale_date'):</strong> {{$date_formatted}}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>@lang('sale.total_amount'): <span>{{$total_amount}}</span></h4>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>@lang('sale.total_paid'): <span>{{$total_paid}}</span></h4>
+                            </td>
+                        </tr>
+                    </table>
+
+                    
+                    <div class="spacer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

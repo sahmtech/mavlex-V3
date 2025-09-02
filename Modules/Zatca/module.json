@@ -1,0 +1,13 @@
+{
+    "name": "Zatca",
+    "alias": "zatca",
+    "description": "Zatca Phase 2 Integration Module for BardPOS",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Zatca\\Providers\\ZatcaServiceProvider"
+    ],
+    "files": [
+        "Helpers/general_helper.php"
+    ]
+}

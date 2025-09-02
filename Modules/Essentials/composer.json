@@ -1,0 +1,25 @@
+{
+    "name": "bardpos/essentials",
+    "description": "",
+    "authors": [
+        {
+            "name": "BardPOS",
+            "email": "bardpos@hotmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Essentials\\Providers\\EssentialsServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Essentials\\": ""
+        }
+    }
+}

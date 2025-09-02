@@ -1,0 +1,25 @@
+{
+    "name": "bardpos/productcatalogue",
+    "description": "",
+    "authors": [
+        {
+            "name": "BardPOS and ERP",
+            "email": "bardpos@hotmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\ProductCatalogue\\Providers\\ProductCatalogueServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ProductCatalogue\\": ""
+        }
+    }
+}

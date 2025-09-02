@@ -1,0 +1,16 @@
+{
+    "name": "Crm",
+    "alias": "crm",
+    "description": "Crm Module for BardPOS",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Crm\\Providers\\CrmServiceProvider"
+    ],
+    "aliases": {},
+    "files": [
+        "Helpers/general_helper.php"
+    ],
+    "requires": []
+}

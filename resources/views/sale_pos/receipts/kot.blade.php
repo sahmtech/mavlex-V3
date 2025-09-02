@@ -1,0 +1,418 @@
+<!-- business information here -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<!-- <link rel="stylesheet" href="style.css"> -->
+	<title>Receipt-{{$receipt_details->invoice_no}}</title>
+</head>
+
+<body>
+	<div class="receipt">
+		<div class="ticket">
+
+			<div class="text-box">
+				<!-- Logo -->
+				<p class="centered">
+
+
+					<!-- business information here -->
+					@if(!empty($receipt_details->display_name))
+					<span class="headings">
+						{{$receipt_details->display_name}}
+					</span>
+					<br />
+					@endif
+					<!-- Title of receipt -->
+					@if(!empty($receipt_details->prebill) || $receipt_details->prebill == 1)
+					<span class="headingsx">
+						{!! $receipt_details->kot_text !!}</span>
+					<br />
+					@endif
+					@if(!empty($receipt_details->order_type))
+					<span class="sub-headings">{!! $receipt_details->order_type_label !!}: {!! $receipt_details->order_type !!}<br></span>
+					@endif
+					<span class="sub-headings">{!! $receipt_details->order_label !!}: {{$receipt_details->invoice_no}}</span>
+				</p>
+			</div>
+
+			<div class="textbox-info">
+				<p class="f-left"><strong>{!! $receipt_details->date_label !!}</strong></p>
+				<p class="f-right">
+					{{$receipt_details->invoice_date}}
+				</p>
+			</div>
+
+			@if(!empty($receipt_details->due_date_label))
+			<div class="textbox-info">
+				<p class="f-left"><strong>{{$receipt_details->due_date_label}}</strong></p>
+				<p class="f-right">{{$receipt_details->due_date ?? ''}}</p>
+			</div>
+			@endif
+
+			@if(!empty($receipt_details->sales_person_label))
+			<div class="textbox-info">
+				<p class="f-left"><strong>{{$receipt_details->sales_person_label}}</strong></p>
+
+				<p class="f-right">{{$receipt_details->sales_person}}</p>
+			</div>
+			@endif
+			@if(!empty($receipt_details->commission_agent_label))
+			<div class="textbox-info">
+				<p class="f-left"><strong>{{$receipt_details->commission_agent_label}}</strong></p>
+
+				<p class="f-right">{{$receipt_details->commission_agent}}</p>
+			</div>
+			@endif
+
+
+
+			<!-- Waiter info -->
+			@if(!empty($receipt_details->service_staff_label) || !empty($receipt_details->service_staff))
+			<div class="textbox-info">
+				<p class="f-left"><strong>
+						{!! $receipt_details->service_staff_label !!}
+					</strong></p>
+				<p class="f-right">
+					{{$receipt_details->service_staff}}
+				</p>
+			</div>
+			@endif
+
+			@if(!empty($receipt_details->table_label) || !empty($receipt_details->table))
+			<div class="textbox-info">
+				<p class="f-left"><strong>
+						@if(!empty($receipt_details->table_label))
+						<b>{!! $receipt_details->table_label !!}</b>
+						@endif
+					</strong></p>
+				<p class="f-right">
+					{{$receipt_details->table}}
+				</p>
+			</div>
+			@endif
+
+			<!-- customer info -->
+			<div class="textbox-info">
+				<p style="vertical-align: top;"><strong>
+						{{$receipt_details->customer_label ?? ''}}
+					</strong></p>
+
+				<p>
+					@if(!empty($receipt_details->customer_info))
+				<div class="bw">
+					{!! $receipt_details->customer_info !!}
+				</div>
+				@endif
+				</p>
+			</div>
+			@if(!empty($receipt_details->sale_orders_invoice_no))
+			<div class="textbox-info">
+				<p class="f-left"><strong>
+						@lang('restaurant.order_no')
+					</strong></p>
+				<p class="f-right">
+					{!!$receipt_details->sale_orders_invoice_no ?? ''!!}
+				</p>
+			</div>
+			@endif
+
+			@if(!empty($receipt_details->sale_orders_invoice_date))
+			<div class="textbox-info">
+				<p class="f-left"><strong>
+						@lang('lang_v1.order_dates')
+					</strong></p>
+				<p class="f-right">
+					{!!$receipt_details->sale_orders_invoice_date ?? ''!!}
+				</p>
+			</div>
+			@endif
+			<table style="margin-top: 25px !important" class="border-bottom width-100 table-f-12 mb-10">
+				<thead class="border-bottom-dotted">
+					<tr>
+						<th class="serial_number">#</th>
+						<th class="description" width="30%">
+							{{$receipt_details->table_product_label}}
+						</th>
+						<th class="quantity text-right">
+							{{$receipt_details->table_qty_label}}
+						</th>
+						<th class="remarks text-right">
+							{{$receipt_details->remarks}}
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					@forelse($receipt_details->lines as $line)
+					<tr>
+						<td class="serial_number" style="vertical-align: top;">
+							{{$loop->iteration}}
+						</td>
+						<td class="description">
+							{{$line['name']}} {{$line['product_variation']}} {{$line['variation']}}
+							<br>
+						</td>
+						<td class="quantity text-right">{{$line['quantity']}} {{$line['units']}}</td>
+						@if(!empty($line['sell_line_note']))
+						<td class="remarks text-right">{{$line['sell_line_note']}}</td>
+						@endif
+
+					</tr>
+					@if (!empty($line['combo_variations']))
+				@foreach ($line['combo_variations'] as $combo)
+				<tr>
+					<td>&nbsp;</td>
+					<td>
+						-{{ $combo['name'] }}{{ $combo['variation'] }} x {{ $combo['quantity'] }} {{--{{ $combo['units'] }} - {{ $combo['unit_price_inc_tax'] }} --}}
+					</td>
+					<td></td>
+					<td class="text-right"></td>
+					<td class="text-right"></td>
+				</tr>
+				@if (!empty($combo['combo_modifiers']))
+				@foreach ($combo['combo_modifiers'] as $combo_modifier)
+				<tr>
+					<td>&nbsp;</td>
+					<td>- {{ $combo_modifier['combo_modifier_name'] }}</td>
+					@if (!empty($combo_modifier['combo_modifier_price']) && $combo_modifier['combo_modifier_price'] != 0)
+					<td></td>
+					<td class="text-right">{{ $combo_modifier['combo_modifier_price'] }}</td>
+					<td class="text-right">{{ $combo_modifier['combo_modifier_price'] }}</td>
+					@else
+					<td></td>
+					<td class="text-right"></td>
+					<td class="text-right"></td>
+					@endif
+				</tr>
+				@endforeach
+				@endif
+				@endforeach
+				@endif
+				@if (empty($line['combo_variations']))
+					@if(!empty($line['modifiers']))
+					@foreach($line['modifiers'] as $modifier)
+					<tr>
+						<td>
+							&nbsp;
+						</td>
+						<td>
+							{{$modifier['name']}} {{$modifier['variation']}}
+							@if(!empty($modifier['sub_sku'])), {{$modifier['sub_sku']}} @endif @if(!empty($modifier['cat_code'])), {{$modifier['cat_code']}}@endif
+							@if(!empty($modifier['sell_line_note']))({{$modifier['sell_line_note']}}) @endif
+						</td>
+						<td class="text-right">{{$modifier['quantity']}} {{$modifier['units']}} </td>
+						@if(empty($receipt_details->hide_price))
+						<td class="text-right">{{$modifier['unit_price_inc_tax']}}</td>
+						@if(!empty($receipt_details->item_discount_label))
+						<td class="text-right">0.00</td>
+						@endif
+						<td class="text-right">{{$modifier['line_total']}}</td>
+						@endif
+					</tr>
+					@endforeach
+					@endif
+					@endif
+					@endforeach
+
+				</tbody>
+			</table>
+			@if(!empty($receipt_details->total_quantity_label))
+			<div class="flex-box">
+				<p class="left text-right">
+					{!! $receipt_details->total_quantity_label !!}
+				</p>
+				<p class="width-50 text-right">
+					{{$receipt_details->total_quantity}}
+				</p>
+			</div>
+			@endif
+
+			@if(!empty($receipt_details->additional_notes))
+			<div class="border-bottom width-100">&nbsp;</div>
+			<div class="flex-box">
+				<p class="left text-right">
+					{!! $receipt_details->order_notes_label !!}
+				</p>
+				<p class="width-50 text-right">
+					{!! nl2br($receipt_details->additional_notes) !!}
+				</p>
+			</div>
+			@endif
+		</div>
+		<!-- <button id="btnPrint" class="hidden-print">Print</button>
+        <script src="script.js"></script> -->
+		<div class="receipt">
+</body>
+
+</html>
+
+<style type="text/css">
+	.f-8 {
+		font-size: 8px !important;
+	}
+
+	body {
+		color: #000000;
+	}
+
+	@media print {
+		* {
+			font-size: 12px;
+			font-family: 'Times New Roman';
+			word-break: break-all;
+		}
+
+		.f-8 {
+			font-size: 8px !important;
+		}
+
+		.headings {
+			font-size: 16px;
+			font-weight: 700;
+			text-transform: uppercase;
+			white-space: nowrap;
+		}
+
+		.headingsx {
+			font-size: 32px;
+			font-weight: 900;
+			text-transform: uppercase;
+			white-space: nowrap;
+		}
+
+		.sub-headings {
+			font-size: 15px !important;
+			font-weight: 700 !important;
+		}
+
+		.border-top {
+			border-top: 1px solid #242424;
+		}
+
+		.border-bottom {
+			border-bottom: 1px solid #242424;
+		}
+
+		.border-bottom-dotted {
+			border-bottom: 1px dotted darkgray;
+		}
+
+		td.serial_number,
+		th.serial_number {
+			width: 5%;
+			max-width: 5%;
+		}
+
+		td.description,
+		th.description {
+			width: 35%;
+			max-width: 35%;
+		}
+
+		td.quantity,
+		th.quantity {
+			width: 15%;
+			max-width: 15%;
+			word-break: break-all;
+		}
+
+		td.unit_price,
+		th.unit_price {
+			width: 25%;
+			max-width: 25%;
+			word-break: break-all;
+		}
+
+		td.price,
+		th.price {
+			width: 20%;
+			max-width: 20%;
+			word-break: break-all;
+		}
+
+		.centered {
+			text-align: center;
+			align-content: center;
+		}
+
+		.ticket {
+			width: 100%;
+			max-width: 100%;
+		}
+
+		img {
+			max-width: inherit;
+			width: auto;
+		}
+
+		.hidden-print,
+		.hidden-print * {
+			display: none !important;
+		}
+	}
+
+	.table-info {
+		width: 100%;
+	}
+
+	.table-info tr:first-child td,
+	.table-info tr:first-child th {
+		padding-top: 8px;
+	}
+
+	.table-info th {
+		text-align: left;
+	}
+
+	.table-info td {
+		text-align: right;
+	}
+
+	.logo {
+		float: left;
+		width: 35%;
+		padding: 10px;
+	}
+
+	.text-with-image {
+		float: left;
+		width: 65%;
+	}
+
+	.text-box {
+		width: 100%;
+		height: auto;
+	}
+
+	.textbox-info {
+		clear: both;
+	}
+
+	.textbox-info p {
+		margin-bottom: 0px
+	}
+
+	.flex-box {
+		display: flex;
+		width: 100%;
+	}
+
+	.flex-box p {
+		width: 50%;
+		margin-bottom: 0px;
+		white-space: nowrap;
+	}
+
+	.table-f-12 th,
+	.table-f-12 td {
+		font-size: 12px;
+		word-break: break-word;
+	}
+
+	.bw {
+		word-break: break-word;
+	}
+</style>

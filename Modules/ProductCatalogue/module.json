@@ -1,0 +1,17 @@
+{
+    "name": "ProductCatalogue",
+    "alias": "productcatalogue",
+    "description": "Catalogue & Menu module",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\ProductCatalogue\\Providers\\ProductCatalogueServiceProvider"
+    ],
+    "aliases": {},
+   
+    "files": [
+        "Helpers/general_helper.php"
+    ],
+    "requires": []
+}
