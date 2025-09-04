@@ -23,7 +23,7 @@ class ProductResource extends JsonResource
         $array['unit'] = $this->unit;
         $array['category'] = $this->category;
         $array['sub_category'] = $this->sub_category;
-        $array['product_tax'] = $this->product_tax;
+        // $array['product_tax'] = $this->product_tax;
 
         $send_lot_detail = ! empty(request()->input('send_lot_detail')) && request()->input('send_lot_detail') == 1 ? true : false;
 
@@ -31,13 +31,6 @@ class ProductResource extends JsonResource
         foreach ($array['product_variations'] as $key => $value) {
             foreach ($value['variations'] as $k => $v) {
                 $tax = [];
-                $tax["id"] = $this->product_tax["id"];
-                $tax["name"] = $this->product_tax["name"];
-                $tax["value"] =  $this->product_tax->amount;
-                $tax["is_tax_group"] = $this->product_tax["is_tax_group"];
-                $tax["sub_taxes"] = $this->product_tax->sub_taxes ?? [];
-                $tax = $this->product_tax ? $tax : [];
-
                 $price_withtax = 0;
                 $price_withtax = (float)$v['default_sell_price'];
                 $tax_1 = 0;
@@ -46,31 +39,35 @@ class ProductResource extends JsonResource
                 $tax_2_minimum_limit = 0;
 
                 if ($this->product_tax) {
-
-                    if (count($this->product_tax->sub_taxes) != 0) {
-                        $firstTax = $this->product_tax->sub_taxes->first();
+                    // if (count($this->product_tax->sub_taxes) != 0) {
+                    if ($this->tax && $this->tax_2) {
+                        // $firstTax = $this->product_tax->sub_taxes->first();
+                        $firstTax = TaxRate::find($this->tax);
                         if ($firstTax) {
                             $tax_1 = $firstTax->amount;
                             $tax_1_minimum_limit = $firstTax->min_amount;
                         }
 
-                        if ($this->product_tax->sub_taxes->count() > 1) {
-                            $secondTax = $this->product_tax->sub_taxes->skip(1)->first();
+                        // $secondTax = $this->product_tax->sub_taxes->skip(1)->first();
+                        $secondTax = TaxRate::find($this->tax_2);
+                        if ($secondTax) {
                             $tax_2 = $secondTax->amount;
                             $tax_2_minimum_limit = $secondTax->min_amount;
                         }
 
-                        if (!empty($tax_1)) {
-                            $price_withtax += $price_withtax * ($tax_1 / 100);
+                        if ($tax_1) {
                             if ($price_withtax < $tax_1_minimum_limit) {
                                 $price_withtax = $price_withtax + $tax_1_minimum_limit;
+                            } else {
+                                $price_withtax += $price_withtax * ($tax_1 / 100);
                             }
                         }
 
-                        if (!empty($tax_2)) {
-                            $price_withtax += $price_withtax * ($tax_2 / 100);
+                        if ($tax_2) {
                             if ($price_withtax < $tax_2_minimum_limit) {
                                 $price_withtax = $price_withtax + $tax_2_minimum_limit;
+                            } else {
+                                $price_withtax += $price_withtax * ($tax_2 / 100);
                             }
                         }
                     } else {
@@ -84,12 +81,21 @@ class ProductResource extends JsonResource
                 }
 
                 $array['product_variations'][$key]['variations'][$k]['pricewithTax'] = round($price_withtax, 4);
-                $array['product_variations'][$key]['variations'][$k]['tax_1'] = $tax_1;
+                $array['product_variations'][$key]['variations'][$k]['pricewithTax'] = $price_withtax;
+                // dd($this->tax , $this->tax_2);
+
                 $array['product_variations'][$key]['variations'][$k]['tax_2'] = $tax_2;
                 $array['product_variations'][$key]['variations'][$k]['tax_1'] = $tax_1;
                 $array['product_variations'][$key]['variations'][$k]['tax_total'] = $tax_1 + $tax_2;
-                $array['product_variations'][$key]['variations'][$k]['tax'] = $tax;
-
+                if ($firstTax) {
+                    $array['product_variations'][$key]['variations'][$k]['tax'] =
+                        collect([$firstTax, $secondTax])
+                        ->filter()
+                        ->whenEmpty(fn($collection) => null);
+                } else {
+                    $array['product_variations'][$key]['variations'][$k]['tax'] =
+                        $this->product_tax;
+                }
                 //set lot details in each variation_location_details
                 if ($send_lot_detail && ! empty($v['variation_location_details'])) {
                     foreach ($v['variation_location_details'] as $u => $w) {

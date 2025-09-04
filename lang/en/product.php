@@ -37,6 +37,8 @@ return [
     'default_purchase_price' => 'Purchase Price',
     'default_selling_price' => 'Default Selling Price',
     'value' => 'Value',
+      'applicable_extra_tax' => 'Applicable Extra Tax',
+  
     'variation_name' => 'Variation Name',
     'variation_values' => 'Variation Values',
     'use_template' => 'Use Template',

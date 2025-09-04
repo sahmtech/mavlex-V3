@@ -7,7 +7,7 @@ $multiplier = 1;
     if ($image) {
         $image_path = public_path('uploads/img/' . $image);
         if (file_exists($image_path)) {
-            $image_url = asset('/uploads/img/' . rawurlencode($image));
+            $image_url = upload_asset('uploads/img/' . rawurlencode($image));
         }
     }
 @endphp
@@ -57,25 +57,20 @@ $multiplier = $value['multiplier'];
 	        }
 	        
 			$tax_id = $product->tax_id;
-			$tax_id_2 = $product->tax_id_2;
 			$item_tax = !empty($product->item_tax) ? $product->item_tax : 0;
-			$item_tax_2 = !empty($product->item_tax_2) ? $product->item_tax_2 : 0;
 			$unit_price_inc_tax = $product->sell_price_inc_tax;
 
 			if($hide_tax == 'hide'){
 				$tax_id = null;
-				$tax_id_2 = null;
 				$unit_price_inc_tax = $product->default_sell_price;
 			}
 
 			if(!empty($so_line) && $action !== 'edit') {
 				$tax_id = $so_line->tax_id;
-				$tax_id_2 = $so_line->tax_id_2;
 				$item_tax = $so_line->item_tax;
-				$item_tax_2 = $so_line->item_tax_2;
 				$unit_price_inc_tax = $so_line->unit_price_inc_tax;
 			}
-			
+
 			$discount_type = !empty($product->line_discount_type) ? $product->line_discount_type : 'fixed';
 			$discount_amount = !empty($product->line_discount_amount) ? $product->line_discount_amount : 0;
 			
@@ -408,15 +403,10 @@ $multiplier = $value['multiplier'];
 		<p class="help-block">{!! __('lang_v1.applied_discount_text', ['discount_name' => $discount->name, 'starts_at' => $discount->formated_starts_at, 'ends_at' => $discount->formated_ends_at]) !!}</p>
 		@endif
 	</td>
-<!-- add tax_2 here-->
+
 	<td class="text-center {{$hide_tax}}">
 		{!! Form::hidden("products[$row_count][item_tax]", @num_format($item_tax), ['class' => 'item_tax']); !!}
 		{!! Form::select("products[$row_count][tax_id]", $tax_dropdown['tax_rates'], $tax_id, ['placeholder' => 'Select', 'class' => 'form-control input-sm tax_id width-100'], $tax_dropdown['attributes']); !!}
-		@if($tax_id_2)
-		<br/>
-		{!! Form::hidden("products[$row_count][item_tax_2]", @num_format($item_tax_2), ['class' => 'item_tax_2']); !!}
-		{!! Form::select("products[$row_count][tax_id_2]", $tax_dropdown['tax_rates'], $tax_id_2, ['placeholder' => 'Select', 'class' => 'form-control input-sm tax_id_2 width-100'], $tax_dropdown['attributes']); !!}
-		@endif
 	</td>
 
 	@else

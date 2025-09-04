@@ -343,6 +343,9 @@ class TransactionUtil extends Util
                 }
                 $uf_quantity = $uf_data ? $this->num_uf($product['quantity']) : $product['quantity'];
                 $uf_item_tax = $uf_data ? $this->num_uf($product['item_tax']) : $product['item_tax'];
+                $uf_item_tax_2 = 0;
+                if (isset($product['item_tax_2']))
+                    $uf_item_tax_2 = $uf_data ? $this->num_uf($product['item_tax_2']) : $product['item_tax_2'];
                 $uf_unit_price_inc_tax = $uf_data ? $this->num_uf($product['unit_price_inc_tax']) : $product['unit_price_inc_tax'];
 
                 $line_discount_amount = 0;
@@ -364,6 +367,8 @@ class TransactionUtil extends Util
                     'line_discount_amount' => $line_discount_amount,
                     'item_tax' =>  $uf_item_tax / $multiplier,
                     'tax_id' => $product['tax_id'],
+                    'item_tax_2' => ($uf_item_tax_2 / $multiplier) ?? null,
+                    'tax_id_2' => $product['tax_id_2'] ?? null,
                     'unit_price_inc_tax' =>  $uf_unit_price_inc_tax / $multiplier,
                     'sell_line_note' => !empty($product['sell_line_note']) ? $product['sell_line_note'] : '',
                     'sub_unit_id' => !empty($product['sub_unit_id']) ? $product['sub_unit_id'] : null,
@@ -485,6 +490,7 @@ class TransactionUtil extends Util
         }
         return true;
     }
+
 
     private function updateSalesOrderLine($so_line_id, $new_qty, $old_qty = 0)
     {
@@ -855,7 +861,7 @@ class TransactionUtil extends Util
 
         return true;
     }
-    
+
     /**
      * Function to add cash denominations for a payment
      */
@@ -910,10 +916,10 @@ class TransactionUtil extends Util
 
         //delete not included denominations
         CashDenomination::where('business_id', $payment->business_id)
-                        ->where('model_type', \App\TransactionPayment::class)
-                        ->where('model_id', $payment->id)
-                        ->whereNotIn('amount', $denominations)
-                        ->delete();
+            ->where('model_type', \App\TransactionPayment::class)
+            ->where('model_id', $payment->id)
+            ->whereNotIn('amount', $denominations)
+            ->delete();
     }
     /**
      * Get payment line for a transaction
@@ -978,7 +984,7 @@ class TransactionUtil extends Util
             $output['table_qty_label_en'] = $il->module_info['zatca']['table_qty_label_en'] ?? '';
             $output['table_unit_price_label_en'] = $il->module_info['zatca']['table_unit_price_label_en'] ?? '';
             $output['table_subtotal_label_en'] = $il->module_info['zatca']['table_subtotal_label_en'] ?? '';
-       
+
             $info = $location_details->zatca_info ?? [];
             $output['crn_name']  = $info['tax_label_2']  ?? '';
             $output['crn_number'] = $info['tax_number_2'] ?? '';
@@ -989,8 +995,8 @@ class TransactionUtil extends Util
             $output['city_sub_division'] = $info['city_sub_division'] ?? '';
             $output['city'] = $info['city'] ?? '';
             $output['country'] = $info['country'] ?? '';
-            $output['postal_number'] = $info['postal_number'] ?? ''; 
-            $output['building_number'] = $info['building_number'] ?? '';            
+            $output['postal_number'] = $info['postal_number'] ?? '';
+            $output['building_number'] = $info['building_number'] ?? '';
         }
 
 
@@ -1236,7 +1242,7 @@ class TransactionUtil extends Util
         //Invoice info
         $output['invoice_no'] = $transaction->invoice_no;
         $output['invoice_no_prefix'] = $il->invoice_no_prefix;
-        $output['invoice_no_prefix_en']    = !empty($il->module_info['zatca']['invoice_no_prefix_en']) ? $il->module_info['zatca']['invoice_no_prefix_en']: '';
+        $output['invoice_no_prefix_en']    = !empty($il->module_info['zatca']['invoice_no_prefix_en']) ? $il->module_info['zatca']['invoice_no_prefix_en'] : '';
         $output['shipping_address'] = !empty($transaction->shipping_address()) ? $transaction->shipping_address() : $transaction->shipping_address;
 
         //Heading & invoice label, when quotation use the quotation heading.
@@ -1304,7 +1310,7 @@ class TransactionUtil extends Util
 
         $output['hide_price'] = !empty($il->common_settings['hide_price']) ? true : false;
         $output['due_date_label_en'] = (!empty($il->module_info['zatca']['due_date_label_en']) ? $il->module_info['zatca']['due_date_label_en'] : '');
-           
+
         if (!empty($il->common_settings['show_due_date']) && $transaction->payment_status != 'paid') {
             $output['due_date_label'] = !empty($il->common_settings['due_date_label']) ? $il->common_settings['due_date_label'] : '';
             $output['due_date_label_en'] = (!empty($il->module_info['zatca']['due_date_label_en']) ? $il->module_info['zatca']['due_date_label_en'] : '');
@@ -1391,9 +1397,7 @@ class TransactionUtil extends Util
                 //zatca code
                 if (!empty($is_zatca_enabled)) {
                     $total_line_taxes_qty += $line['total_item_tax_unformatted'] ?? 0;
-                    
                 }
-                
             }
 
             if (!empty($il->common_settings['total_quantity_label'])) {
@@ -1401,7 +1405,7 @@ class TransactionUtil extends Util
                 $output['total_quantity'] = $this->num_f($total_quantity, false, $business_details, true);
             }
             $output['total_quantity_label_en']  = (!empty($il->module_info['zatca']['total_quantity_label_en']) ? $il->module_info['zatca']['total_quantity_label_en'] : '');
-           
+
             $output['subtotal_exc_tax'] = $this->num_f($subtotal_exc_tax, true, $business_details, true);
 
             $output['total_line_discount'] = !empty($total_line_discount) ? $this->num_f($total_line_discount, true, $business_details) : 0;
@@ -1665,7 +1669,7 @@ class TransactionUtil extends Util
 
         //Barcode related information.
         $output['show_barcode'] = !empty($il->show_barcode) ? true : false;
-        
+
 
         //Zatca QR CODE for SELL Return
         if (in_array($transaction_type, ['sell_return'])) {
@@ -1680,8 +1684,8 @@ class TransactionUtil extends Util
                     $qr_code_text = $this->_zatca_qr_text($business_details->name, $business_details->tax_number_1, $transaction->transaction_date, $transaction->final_total, $total_order_tax);
                 }
                 $output['qr_code_text'] = $qr_code_text;
-           }
-       }
+            }
+        }
 
         if (in_array($transaction_type, ['sell', 'sales_order'])) {
             //Qr code related information.
@@ -1819,7 +1823,7 @@ class TransactionUtil extends Util
             }
             //Zatca code End
         }
-        
+
         //Module related information.
 
         if (!empty($il->module_info['tables']) && $this->isModuleEnabled('tables')) {
@@ -2546,8 +2550,8 @@ class TransactionUtil extends Util
                 'tax_percent' => ! empty($tax_details) ? $tax_details->amount : null,
                 'quantity_uf' => $line->quantity_returned,
                 'unit_price_uf' => $line->unit_price,
-                 'line_discount_amount_uf' => $line->line_discount_amount,
-                 'line_discount_type_uf' => $line->line_discount_type,
+                'line_discount_amount_uf' => $line->line_discount_amount,
+                'line_discount_type_uf' => $line->line_discount_type,
             ];
             $line_array['line_discount'] = 0;
 
@@ -3454,7 +3458,7 @@ class TransactionUtil extends Util
             $business['pos_settings'] = json_decode($business['pos_settings'], true);
         }
         $allow_overselling = ! empty($business['pos_settings']['allow_overselling']) ?
-                            true : false;
+            true : false;
 
         //Set flag to check for expired items during SELLING only.
         $stop_selling_expired = false;
@@ -3480,8 +3484,12 @@ class TransactionUtil extends Util
             $query = Transaction::join('purchase_lines AS PL', 'transactions.id', '=', 'PL.transaction_id')
                 ->where('transactions.business_id', $business['id'])
                 ->where('transactions.location_id', $business['location_id'])
-                ->whereIn('transactions.type', ['purchase', 'purchase_transfer',
-                    'opening_stock', 'production_purchase', ])
+                ->whereIn('transactions.type', [
+                    'purchase',
+                    'purchase_transfer',
+                    'opening_stock',
+                    'production_purchase',
+                ])
                 ->where('transactions.status', 'received')
                 ->whereRaw("( $qty_sum_query ) < PL.quantity")
                 ->where('PL.product_id', $line->product_id)
@@ -3522,7 +3530,7 @@ class TransactionUtil extends Util
                 'PL.quantity_returned as quantity_returned',
                 'PL.mfg_quantity_used as mfg_quantity_used',
                 'transactions.invoice_no'
-                    )->get();
+            )->get();
 
             $purchase_sell_map = [];
 
@@ -3545,7 +3553,8 @@ class TransactionUtil extends Util
                     //Mapping of stock adjustment
                     if ($qty_allocated != 0) {
                         $purchase_adjustment_map[] =
-                            ['stock_adjustment_line_id' => $line->id,
+                            [
+                                'stock_adjustment_line_id' => $line->id,
                                 'purchase_line_id' => $row->purchase_lines_id,
                                 'quantity' => $qty_allocated,
                                 'created_at' => \Carbon::now(),
@@ -3559,7 +3568,8 @@ class TransactionUtil extends Util
                 } elseif ($mapping_type == 'purchase') {
                     //Mapping of purchase
                     if ($qty_allocated != 0) {
-                        $purchase_sell_map[] = ['sell_line_id' => $line->id,
+                        $purchase_sell_map[] = [
+                            'sell_line_id' => $line->id,
                             'purchase_line_id' => $row->purchase_lines_id,
                             'quantity' => $qty_allocated,
                             'created_at' => \Carbon::now(),
@@ -3572,7 +3582,8 @@ class TransactionUtil extends Util
                 } elseif ($mapping_type == 'production_purchase') {
                     //Mapping of purchase
                     if ($qty_allocated != 0) {
-                        $purchase_sell_map[] = ['sell_line_id' => $line->id,
+                        $purchase_sell_map[] = [
+                            'sell_line_id' => $line->id,
                             'purchase_line_id' => $row->purchase_lines_id,
                             'quantity' => $qty_allocated,
                             'created_at' => \Carbon::now(),
@@ -3596,10 +3607,10 @@ class TransactionUtil extends Util
                     $variation = Variation::find($line->variation_id);
                     $mismatch_name = $product->name;
                     if (! empty($variation->sub_sku)) {
-                        $mismatch_name .= ' '.'SKU: '.$variation->sub_sku;
+                        $mismatch_name .= ' ' . 'SKU: ' . $variation->sub_sku;
                     }
                     if (! empty($qty_selling)) {
-                        $mismatch_name .= ' '.'Quantity: '.abs($qty_selling);
+                        $mismatch_name .= ' ' . 'Quantity: ' . abs($qty_selling);
                     }
 
                     if ($mapping_type == 'purchase') {
@@ -3625,11 +3636,12 @@ class TransactionUtil extends Util
 
                     $business_name = optional(Business::find($business['id']))->name;
                     $location_name = optional(BusinessLocation::find($business['location_id']))->name;
-                    \Log::emergency($mismatch_error.' Business: '.$business_name.' Location: '.$location_name);
+                    \Log::emergency($mismatch_error . ' Business: ' . $business_name . ' Location: ' . $location_name);
                     throw new PurchaseSellMismatch($mismatch_error);
                 } else {
                     //Mapping with no purchase line
-                    $purchase_sell_map[] = ['sell_line_id' => $line->id,
+                    $purchase_sell_map[] = [
+                        'sell_line_id' => $line->id,
                         'purchase_line_id' => 0,
                         'quantity' => $qty_selling,
                         'created_at' => \Carbon::now(),
@@ -4072,28 +4084,28 @@ class TransactionUtil extends Util
         // 1) Build your date filter (opening vs closing)
         if ($is_opening) {
             $nextDay = Carbon::parse($date)->addDay()->format('Y-m-d');
-            $dateFilter = function($q) use ($date, $nextDay) {
+            $dateFilter = function ($q) use ($date, $nextDay) {
                 $q->whereDate('t.transaction_date', '<=', $date)
-                  ->orWhere(function($q2) use ($nextDay) {
-                      $q2->whereDate('t.transaction_date', $nextDay)
-                         ->where('t.type', 'opening_stock');
-                  });
+                    ->orWhere(function ($q2) use ($nextDay) {
+                        $q2->whereDate('t.transaction_date', $nextDay)
+                            ->where('t.type', 'opening_stock');
+                    });
             };
         } else {
             $dateFilter = fn($q) => $q->whereDate('t.transaction_date', '<=', $date);
         }
-    
+
         // 2) Product filters helper
-        $applyProductFilters = function($q) use ($filters) {
-            $q->when($filters['category_id']   ?? null, fn($q,$v)=>$q->where('p.category_id',   $v))
-              ->when($filters['sub_category_id'] ?? null, fn($q,$v)=>$q->where('p.sub_category_id',$v))
-              ->when($filters['brand_id']       ?? null, fn($q,$v)=>$q->where('p.brand_id',      $v))
-              ->when($filters['unit_id']        ?? null, fn($q,$v)=>$q->where('p.unit_id',       $v));
+        $applyProductFilters = function ($q) use ($filters) {
+            $q->when($filters['category_id']   ?? null, fn($q, $v) => $q->where('p.category_id',   $v))
+                ->when($filters['sub_category_id'] ?? null, fn($q, $v) => $q->where('p.sub_category_id', $v))
+                ->when($filters['brand_id']       ?? null, fn($q, $v) => $q->where('p.brand_id',      $v))
+                ->when($filters['unit_id']        ?? null, fn($q, $v) => $q->where('p.unit_id',       $v));
         };
-    
+
         // 3) Permitted locations
         $permitted = auth()->user()->permitted_locations();
-    
+
         //
         // A) PURCHASES & OPENING STOCK
         //
@@ -4101,15 +4113,15 @@ class TransactionUtil extends Util
         $purchaseExpr = $by_sale_price
             ? 'v.sell_price_inc_tax'
             : '(pl.purchase_price + COALESCE(pl.item_tax,0))';
-    
+
         $purchaseValue = DB::table('purchase_lines AS pl')
             ->join('transactions AS t', 'pl.transaction_id', '=', 't.id')
             ->join('variations   AS v', 'pl.variation_id',   '=', 'v.id')
             ->join('products     AS p', 'pl.product_id',     '=', 'p.id')
-            ->when($location_id,     fn($q)=>$q->where('t.location_id',   $location_id))
-            ->when($permitted!=='all',fn($q)=>$q->whereIn('t.location_id', $permitted))
+            ->when($location_id,     fn($q) => $q->where('t.location_id',   $location_id))
+            ->when($permitted !== 'all', fn($q) => $q->whereIn('t.location_id', $permitted))
             ->where('t.business_id', $business_id)
-            ->whereIn('t.type', ['purchase','opening_stock'])
+            ->whereIn('t.type', ['purchase', 'opening_stock'])
             ->where($dateFilter)
             ->tap($applyProductFilters)
             ->selectRaw("
@@ -4122,7 +4134,7 @@ class TransactionUtil extends Util
                 ) AS val
             ")
             ->value('val') ?: 0;
-    
+
         //
         // B) SALES (always negative)
         //
@@ -4132,8 +4144,8 @@ class TransactionUtil extends Util
                 ->join('transactions AS t', 'tsl.transaction_id', '=', 't.id')
                 ->join('variations   AS v', 'tsl.variation_id',   '=', 'v.id')
                 ->join('products     AS p', 'v.product_id',       '=', 'p.id')
-                ->when($location_id,     fn($q)=>$q->where('t.location_id',   $location_id))
-                ->when($permitted!=='all',fn($q)=>$q->whereIn('t.location_id', $permitted))
+                ->when($location_id,     fn($q) => $q->where('t.location_id',   $location_id))
+                ->when($permitted !== 'all', fn($q) => $q->whereIn('t.location_id', $permitted))
                 ->where('t.business_id', $business_id)
                 ->where('t.type', 'sell')
                 ->whereDate('t.transaction_date', '<=', $date)
@@ -4156,8 +4168,8 @@ class TransactionUtil extends Util
                 ->join('transactions           AS t',   'tsl.transaction_id',    '=', 't.id')
                 ->join('variations             AS v',   'pl.variation_id',       '=', 'v.id')
                 ->join('products               AS p',   'pl.product_id',         '=', 'p.id')
-                ->when($location_id,     fn($q)=>$q->where('t.location_id',   $location_id))
-                ->when($permitted!=='all',fn($q)=>$q->whereIn('t.location_id', $permitted))
+                ->when($location_id,     fn($q) => $q->where('t.location_id',   $location_id))
+                ->when($permitted !== 'all', fn($q) => $q->whereIn('t.location_id', $permitted))
                 ->where('t.business_id', $business_id)
                 ->whereDate('t.transaction_date', '<=', $date)
                 ->tap($applyProductFilters)
@@ -4172,7 +4184,7 @@ class TransactionUtil extends Util
                 ")
                 ->value('val') ?: 0;
         }
-    
+
         //
         // C) STOCK ADJUSTMENTS
         //
@@ -4181,13 +4193,13 @@ class TransactionUtil extends Util
         $adjustExpr = $by_sale_price
             ? 'v.sell_price_inc_tax'
             : 'v.default_purchase_price';
-    
+
         $adjustValue = DB::table('stock_adjustment_lines AS sal')
             ->join('transactions AS t', 'sal.transaction_id', '=', 't.id')
             ->join('variations   AS v', 'sal.variation_id',   '=', 'v.id')
             ->join('products     AS p', 'v.product_id',       '=', 'p.id')
-            ->when($location_id,     fn($q)=>$q->where('t.location_id',   $location_id))
-            ->when($permitted!=='all',fn($q)=>$q->whereIn('t.location_id', $permitted))
+            ->when($location_id,     fn($q) => $q->where('t.location_id',   $location_id))
+            ->when($permitted !== 'all', fn($q) => $q->whereIn('t.location_id', $permitted))
             ->where('t.business_id', $business_id)
             ->where('t.type', 'stock_adjustment')
             ->whereDate('t.transaction_date', '<=', $date)
@@ -4199,7 +4211,7 @@ class TransactionUtil extends Util
                 ) AS val
             ")
             ->value('val') ?: 0;
-    
+
         // Net stock value (monetary)
         return (float) ($purchaseValue + $salesValue + $adjustValue);
     }
@@ -5451,7 +5463,7 @@ class TransactionUtil extends Util
     {
         // Initialize variables and fetch business ID
         $business_id = request()->session()->get('user.business_id');
-        
+
         // Fetch previous transaction sums before the start date
         $previous_transaction_sums = $this->__transactionQuery($contact_id, $start)
             ->select(
@@ -5461,12 +5473,12 @@ class TransactionUtil extends Util
                 DB::raw("SUM(IF(type = 'purchase_return', final_total, 0)) as total_purchase_return"),
                 DB::raw("SUM(IF(type = 'opening_balance', final_total, 0)) as total_opening_balance")
             )->first();
-        
+
         // Fetch previous payments before the start date
         $prev_payments = $this->__paymentQuery($contact_id, $start)
             ->select('transaction_payments.*', 'bl.name as location_name', 't.type as transaction_type', 'is_advance')
             ->get();
-        
+
         // Calculate sums for previous payments
         $prev_total_advance_payment = $prev_payments->where('is_advance', 1)->sum('amount');
         $prev_total_regular_payments = $prev_payments->where('is_advance', 0)->sum('amount');
@@ -5483,25 +5495,25 @@ class TransactionUtil extends Util
         $total_prev_invoice = $previous_transaction_sums->total_purchase + $previous_transaction_sums->total_invoice -  $previous_transaction_sums->total_sell_return -  $previous_transaction_sums->total_purchase_return + $previous_transaction_sums->total_opening_balance;
         $beginning_balance = $total_prev_invoice - $total_prev_paid;
         $contact = Contact::find($contact_id);
-        
+
         // Fetch transactions within the date range
         $transactions = $this->__transactionQuery($contact_id, $start, $end)
             ->with(['location'])->get();
         $transaction_types = Transaction::transactionTypes();
         $ledger = [];
-    
+
         // Initialize opening balance variables
         $opening_balance = 0;
         $opening_balance_paid = 0;
-    
+
         // Process each transaction to build the ledger
         foreach ($transactions as $transaction) {
-    
+
             if ($transaction->type == 'opening_balance') {
                 $opening_balance += $transaction->final_total;
                 continue;
             }
-    
+
             $ledger[] = [
                 'date' => $transaction->transaction_date,
                 'ref_no' => in_array($transaction->type, ['sell', 'sell_return']) ? $transaction->invoice_no : $transaction->ref_no,
@@ -5516,17 +5528,17 @@ class TransactionUtil extends Util
                 'others' => $transaction->additional_notes
             ];
         }
-    
+
         // Calculate sums for transactions
         $invoice_sum = $transactions->where('type', 'sell')->sum('final_total');
         $purchase_sum = $transactions->where('type', 'purchase')->sum('final_total');
         $sell_return_sum = $transactions->where('type', 'sell_return')->sum('final_total');
         $purchase_return_sum = $transactions->where('type', 'purchase_return')->sum('final_total');
         $payments = $this->__paymentQuery($contact_id, $start, $end)->select('transaction_payments.*', 'bl.name as location_name', 't.type as transaction_type', 't.ref_no', 't.invoice_no')->get();
-    
+
         // Fetch payment types for display
         $paymentTypes = $this->payment_types(null, true, $business_id);
-    
+
         // Process each payment to build the ledger
         foreach ($payments as $payment) {
             if ($payment->transaction_type == 'sell' && $payment->is_return == 0) {
@@ -5544,19 +5556,19 @@ class TransactionUtil extends Util
             if ($payment->transaction_type == 'opening_balance') {
                 $opening_balance_paid += $payment->amount;
             }
-    
+
             // **Remove or Comment Out the Following Lines to Include Payments with `parent_id`:**
             // if (!empty($payment->parent_id)) {
             //     continue;
             // }
-    
+
             // **Handle Advance Payments Appropriately:**
             $ref_no = in_array($payment->transaction_type, ['sell', 'sell_return']) ?  $payment->invoice_no :  $payment->ref_no;
             $note = $payment->note;
             if (!empty($ref_no)) {
                 $note .= '<small>' . __('account.payment_for') . ': ' . $ref_no . '</small>';
             }
-    
+
             if ($payment->is_advance == 1 && empty($ref_no)) {
                 // **Advance Payment Not Applied to Any Invoice**
                 $type = __('lang_v1.advance_payment');
@@ -5574,18 +5586,18 @@ class TransactionUtil extends Util
             } else {
                 // **Regular Payment Handling**
                 $type = $transaction_types['payment'];
-                $debit = in_array($payment->transaction_type, ['purchase', 'sell_return']) || ($payment->is_return ==1) ? $payment->amount : '';
-                $credit = (in_array($payment->transaction_type, ['sell', 'purchase_return', 'opening_balance']) && $payment->is_return ==0) ? $payment->amount : '';
+                $debit = in_array($payment->transaction_type, ['purchase', 'sell_return']) || ($payment->is_return == 1) ? $payment->amount : '';
+                $credit = (in_array($payment->transaction_type, ['sell', 'purchase_return', 'opening_balance']) && $payment->is_return == 0) ? $payment->amount : '';
                 $advance = '';
             }
-    
+
             // **Include Payments with `parent_id` as 'Advance Payment Applied'**
             if (!empty($payment->parent_id)) {
                 // Fetch the parent advance payment for reference if needed
                 $parent_advance = TransactionPayment::find($payment->parent_id);
                 $note .= '<small>' . __('lang_v1.advance_payment_applied') . ': ' . ($parent_advance ? $parent_advance->payment_ref_no : '') . '</small>';
             }
-    
+
             $ledger[] = [
                 'date' => $payment->paid_on,
                 'ref_no' => $payment->payment_ref_no,
@@ -5600,7 +5612,7 @@ class TransactionUtil extends Util
                 'others' =>  $note
             ];
         }
-    
+
         // Calculate sums for payments
         $total_invoice_paid = $payments->where('transaction_type', 'sell')->where('is_return', 0)->sum('amount');
         $total_sell_change_return = $payments->where('transaction_type', 'sell')->where('is_return', 1)->sum('amount');
@@ -5617,7 +5629,7 @@ class TransactionUtil extends Util
         $opening_balance_due = $opening_balance;
         $total_paid = $total_invoice_paid + $total_purchase_paid - $total_sell_return_paid - $total_purchase_return_paid;
         $curr_due = $total_invoice + $total_purchase - $total_paid + $beginning_balance + $opening_balance_due;
-    
+
         if (!empty($ledger)) {
             usort($ledger, function ($a, $b) {
                 $t1 = strtotime($a['date']);
@@ -5625,9 +5637,9 @@ class TransactionUtil extends Util
                 return $t1 - $t2;
             });
         }
-    
+
         $total_opening_bal = $beginning_balance + $opening_balance_due;
-    
+
         // Prepend Opening Balance to the ledger
         $ledger = array_merge([[
             'date' => $start,
@@ -5642,13 +5654,13 @@ class TransactionUtil extends Util
             'advance' => '',
             'others' => ''
         ]], $ledger);
-    
+
         // Initialize balance
         $bal = 0;
         foreach ($ledger as $key => $val) {
             $credit = !empty($val['credit']) ? $val['credit'] : 0;
             $debit = !empty($val['debit']) ? $val['debit'] : 0;
-    
+
             if ($val['type'] == __('lang_v1.advance_payment')) {
                 $balance = $this->num_f(abs($bal));
                 if ($bal < 0) {
@@ -5659,22 +5671,22 @@ class TransactionUtil extends Util
                 $ledger[$key]['balance'] = $balance;
                 continue;
             }
-    
+
             $bal += ($credit - $debit);
             $balance = $this->num_f(abs($bal));
-    
+
             if ($bal < 0) {
                 $balance .= ' ' . __('lang_v1.dr');
             } else if ($bal > 0) {
                 $balance .= ' ' . __('lang_v1.cr');
             }
-    
+
             $ledger[$key]['balance'] = $balance;
         }
-            $total_invoice_paid_amounts = [];
-            $total_purchase_paid_amounts = [];
-            $total_sell_return_paid_amounts = [];
-            $total_purchase_return_paid_amounts = [];
+        $total_invoice_paid_amounts = [];
+        $total_purchase_paid_amounts = [];
+        $total_sell_return_paid_amounts = [];
+        $total_purchase_return_paid_amounts = [];
         // Prepare output
         $output = [
             'ledger' => $ledger,
@@ -5692,10 +5704,10 @@ class TransactionUtil extends Util
             'total_sell_return_paid_amounts' => $total_sell_return_paid_amounts,
             'total_purchase_return_paid_amounts' => $total_purchase_return_paid_amounts,
         ];
-    
+
         return $output;
     }
-    
+
 
     /**
      * Query to get transaction totals for a customer
